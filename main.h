@@ -1,3 +1,4 @@
+#include <iostream>
 #include <map>
 
 namespace teams {
@@ -31,11 +32,16 @@ class team : common {
         team *parent;
         //funcs
         void remove();
+        void update(channel);
     };
 
     //functions
+    //void funcs
     void archive(bool shouldSetSpoSiteReadOnlyForMembers = false); //archive team with this function
     void unArchive();
+    void update(team);
+    //non-void funcs
+    channel createChannel(channel c);
     bool isArchived();
     std::map<std::string,teams::team::channel> getChannels();
     teams::team::channel getChannel(std::string id);

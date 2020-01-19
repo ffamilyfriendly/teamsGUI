@@ -16,57 +16,136 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QPushButton" name="loadTeamsBtn">
-        <property name="text">
-         <string>Load teams</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QTableWidget" name="tableWidget">
-      <column>
-       <property name="text">
-        <string>ID</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>displayName</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>mail</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>created</string>
-       </property>
-      </column>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="teamsTab">
+       <attribute name="title">
+        <string>Teams</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QPushButton" name="loadTeamsBtn">
+          <property name="text">
+           <string>Load teams</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QTableWidget" name="tableWidget">
+            <column>
+             <property name="text">
+              <string>ID</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>displayName</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>mail</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>created</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QPushButton" name="deleteBtn">
+            <property name="text">
+             <string>Archive</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="unArchiveBtn">
+            <property name="text">
+             <string>unArchive</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="loadChannelsBtn">
+            <property name="text">
+             <string>load channels</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="exportBtn">
+            <property name="text">
+             <string>export</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="channelsTab">
+       <attribute name="title">
+        <string>Channels</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="QTableWidget" name="channelsTable">
+          <column>
+           <property name="text">
+            <string>id</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>name</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>email</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="buttonGrp">
+          <item>
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>delete</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
      </widget>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
-      <item>
-       <widget class="QPushButton" name="deleteBtn">
-        <property name="text">
-         <string>Archive</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="unArchiveBtn">
-        <property name="text">
-         <string>unArchive</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </item>
    </layout>
   </widget>

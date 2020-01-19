@@ -25,9 +25,13 @@ private slots:
 
     void on_unArchiveBtn_clicked();
 
-    void on_pushButton_2_clicked();
-
     void on_filterRun_clicked();
+
+    void on_loadChannelsBtn_clicked();
+
+    void on_exportBtn_clicked();
+
+    void on_createChannelsBtn_clicked();
 
 private:
     Ui::MainWindow *ui;

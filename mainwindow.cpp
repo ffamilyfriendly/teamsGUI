@@ -4,8 +4,10 @@
 #include "login.h"
 #include <iostream>
 #include <QMessageBox>
+#include <QTextStream>
 
-std::map<std::string,teams::team> teamsList;
+std::map<std::string,teams::team> tApi::teamsList;
+std::map<std::string,teams::team::channel> tApi::channelList;
 
 void openLoginForm() {
     login login;
@@ -31,7 +33,7 @@ MainWindow::~MainWindow()
 void MainWindow::renderTeams() {
     ui->statusbar->showMessage("loading teams...");
     ui->tableWidget->setRowCount(0);
-    for(std::pair<std::string, teams::team> element : teamsList) {
+    for(std::pair<std::string, teams::team> element : tApi::teamsList) {
         ui->tableWidget->insertRow(ui->tableWidget->rowCount());
         //set item values
         ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,0,new QTableWidgetItem(QString::fromUtf8(element.second.id.c_str())));
@@ -44,7 +46,7 @@ void MainWindow::renderTeams() {
 
 void MainWindow::on_loadTeamsBtn_clicked()
 {
-   teamsList = tApi::c->getTeams();
+   tApi::teamsList = tApi::c->getTeams();
    this->renderTeams();
 }
 
@@ -65,7 +67,7 @@ std::string dueDeletion(QTableWidget *tbl,std::string action = "archived") {
         QList<QModelIndex> rows = sel->selectedRows();
         for(int i = 0; i < rows.size(); i++) {
             QModelIndex row = rows.at(i);
-            teams::team t = teamsList[tbl->item(row.row(),0)->text().toUtf8().constData()];
+            teams::team t = tApi::teamsList[tbl->item(row.row(),0)->text().toUtf8().constData()];
             std::string dt = std::string("name: ") + std::string(t.displayName) + std::string("\n");
             rowC+=dt;
         }
@@ -83,10 +85,10 @@ void MainWindow::on_deleteBtn_clicked()
     msgBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Yes);
     int res = msgBox.exec();
     if(res == QMessageBox::Yes) {
-        ui->statusbar->showMessage("archiving teams...");
-        ui->statusbar->showMessage("archiving teams done!");
+        ui->statusbar->showMessage("archiving teams...",1000*5);
         try {
-            tApi::archiveTeams(ui->tableWidget,teamsList);
+            tApi::archiveTeams(ui->tableWidget,tApi::teamsList);
+            ui->statusbar->showMessage("archiving teams done!",1000*10);
         } catch(std::runtime_error e) {
             QString errmsg = QString("Error: ") + QString(e.what());
             ui->statusbar->showMessage(errmsg);
@@ -105,10 +107,10 @@ void MainWindow::on_unArchiveBtn_clicked()
     msgBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Yes);
     int res = msgBox.exec();
     if(res == QMessageBox::Yes) {
-        ui->statusbar->showMessage("un-archiving teams...");
-        ui->statusbar->showMessage("un-archiving teams done!");
+        ui->statusbar->showMessage("un-archiving teams...",1000*5);
         try {
-            tApi::unArchiveTeams(ui->tableWidget,teamsList);
+            tApi::unArchiveTeams(ui->tableWidget,tApi::teamsList);
+            ui->statusbar->showMessage("un-archiving teams done!",1000*10);
         } catch(std::runtime_error e) {
             QString errmsg = QString("Error: ") + QString(e.what());
             ui->statusbar->showMessage(errmsg);
@@ -117,20 +119,15 @@ void MainWindow::on_unArchiveBtn_clicked()
     }
 }
 
-void MainWindow::on_pushButton_2_clicked()
-{
-
-}
-
 void MainWindow::on_filterRun_clicked()
 {
     try {
-    for(std::pair<std::string, teams::team> element : teamsList) {
+    for(std::pair<std::string, teams::team> element : tApi::teamsList) {
         std::string id = element.first;
         if(!ui->filterName->toPlainText().isEmpty()) {
             QString tName = QString(element.second.displayName.c_str());
             if(!tName.contains(ui->filterName->toPlainText())) {
-                teamsList.erase(id);
+                tApi::teamsList.erase(id);
             }
         }
         if(!ui->filterTime->date().isNull()) {
@@ -139,14 +136,13 @@ void MainWindow::on_filterRun_clicked()
 
             if(ui->beforeOrAfter->isChecked()) {
                 if(tT > fT) {
-                    teamsList.erase(id);
+                    tApi::teamsList.erase(id);
                 }
             } else {
                 if(tT < fT) {
-                    teamsList.erase(id);
+                    tApi::teamsList.erase(id);
                 }
             }
-
         }
     }
     this->renderTeams();
@@ -154,3 +150,26 @@ void MainWindow::on_filterRun_clicked()
         ui->statusbar->showMessage("bad alloc. can not filter");
     }
 }
+
+void MainWindow::on_loadChannelsBtn_clicked()
+{
+    ui->statusbar->showMessage("loading channels...",1000*5);
+    tApi::channelList = tApi::loadChannels(ui->tableWidget,ui->channelsTable,tApi::teamsList);
+}
+
+void MainWindow::on_exportBtn_clicked()
+{
+    std::vector<teams::team> tList = tApi::getFromTable<teams::team>(ui->tableWidget,tApi::teamsList);
+    QString uri = QFileDialog::getSaveFileName(this,tr("save file"));
+    std::vector<teams::team> tVec = tApi::getFromTable<teams::team>(ui->tableWidget,tApi::teamsList);
+    QFile file(uri);
+    if(file.open(QIODevice::ReadWrite)) {
+        QTextStream out(&file);
+        for(unsigned int i = 0; i < tVec.size(); i++) {
+            teams::team ct = tVec.at(i);
+            out << ct.id.c_str() << "," << ct.displayName.c_str() << "," << ct.mailEnabled << "," << ct.mail.c_str() << "," << ct.createdDateTime.c_str() << "\n";
+        }
+        file.close();
+    }
+}
+
